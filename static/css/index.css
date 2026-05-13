@@ -156,7 +156,7 @@ h2 {
 
 h1 {
   max-width: 1120px;
-  font-size: clamp(2.85rem, 5.4vw, 5.35rem);
+  font-size: clamp(2.65rem, 4.8vw, 4.85rem);
   overflow-wrap: normal;
   text-wrap: balance;
 }
@@ -192,7 +192,7 @@ h2 {
   max-width: 920px;
   margin-top: 0;
   color: var(--muted);
-  font-size: 0.98rem;
+  font-size: 1.08rem;
   font-weight: 700;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -766,6 +766,14 @@ h2 {
   font-size: 0.98rem;
 }
 
+.text-emphasis {
+  text-decoration-line: underline;
+  text-decoration-color: rgba(217, 120, 80, 0.68);
+  text-decoration-thickness: 0.11em;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+}
+
 .comparison-callout {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -818,6 +826,12 @@ h2 {
   font-weight: 700;
 }
 
+.academic-table th small {
+  color: var(--muted);
+  font-size: 0.78em;
+  font-weight: 800;
+}
+
 .table-wrap {
   overflow-x: visible;
 }
@@ -845,6 +859,11 @@ h2 {
   text-align: left;
 }
 
+.academic-table tbody tr:last-child th,
+.academic-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .academic-table thead th {
   color: var(--green-dark);
   background: #fffaf2;
@@ -864,8 +883,16 @@ h2 {
   background: rgba(47, 95, 85, 0.08);
 }
 
+.academic-table .summary-row {
+  background: rgba(47, 95, 85, 0.08);
+}
+
 .academic-table .best-row th,
-.academic-table .best-row td,
+.academic-table .best-row td {
+  color: var(--green-dark);
+  font-weight: 900;
+}
+
 .academic-table .best-cell {
   color: var(--green-dark);
   font-weight: 900;
@@ -1336,9 +1363,8 @@ pre {
     font-size: 1.92rem;
   }
 
-  .author-list,
-  .affiliation-list {
-    font-size: 0.92rem;
+  .author-list {
+    font-size: 1rem;
   }
 
   .affiliation-list {

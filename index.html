@@ -83,7 +83,7 @@
       <a href="#results">Results</a>
       <a href="#real-robot">Real Robot</a>
       <a href="#analysis">Analysis</a>
-      <a href="#BibTeX">BibTeX</a>
+      <a href="#BibTeX">Citation</a>
     </nav>
   </header>
 
@@ -100,21 +100,22 @@
             </p>
           </div>
           <div class="author-list">
-            <span>Mingtong Dai<sup>1,2</sup></span>
-            <span>Guanqi Peng<sup>3</sup></span>
-            <span>Yongjie Bai<sup>2,4</sup></span>
-            <span>Feng Yan<sup>5</sup></span>
+            <span>Mingtong Dai<sup>1,2,3</sup></span>
+            <span>Guanqi Peng<sup>2,4</sup></span>
+            <span>Yongjie Bai<sup>2,5</sup></span>
+            <span>Feng Yan<sup>6</sup></span>
             <span>Chunjie Chen<sup>1</sup></span>
             <span>Lingbo Liu*<sup>2</sup></span>
-            <span>Liang Lin<sup>2,4</sup></span>
+            <span>Liang Lin<sup>2,5</sup></span>
             <span>Xinyu Wu<sup>1</sup></span>
           </div>
           <div class="affiliation-list" aria-label="Author affiliations">
-            <span><sup>1</sup>Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences</span>
-            <span><sup>2</sup>Peng Cheng Laboratory</span>
-            <span><sup>3</sup>Southern University of Science and Technology</span>
-            <span><sup>4</sup>Sun Yat-sen University</span>
-            <span><sup>5</sup>United Nova Technology Co.,Ltd.</span>
+            <span><sup>1</sup>SIAT</span>
+            <span><sup>2</sup>PCL</span>
+            <span><sup>3</sup>UCAS</span>
+            <span><sup>4</sup>SUSTech</span>
+            <span><sup>5</sup>SYSU</span>
+            <span><sup>6</sup>UNT</span>
           </div>
           <div class="button-row">
             <a class="paper-button primary" href="#">
@@ -142,17 +143,17 @@
         <div class="section-kicker">Abstract</div>
         <p>
           Previous imitation learning policies predict future actions at every control step, whether in smooth
-          motion phases or precise, contact-rich operation phases. This uniform treatment is wasteful: most
+          motion phases or precise, contact-rich operation phases. <span class="text-emphasis">This uniform treatment is wasteful</span>: most
           steps in a manipulation trajectory traverse free space and carry little task-relevant information,
           while a small fraction of key steps around contacts, grasps, and alignment demand dense,
           high-resolution prediction.
         </p>
         <p>
-          SkiP introduces an action relabeling mechanism: at each timestep in a skip segment, the behavior
-          cloning target is replaced with the action at the entrance of the next key segment, enabling the policy
+          SkiP introduces an action relabeling mechanism: at each timestep in a skip segment, <span class="text-emphasis">the behavior
+          cloning target is replaced with the action at the entrance of the next key segment</span>, enabling the policy
           to leap over redundant steps in a single decision. Motion Spectrum Keying (MSK) partitions
           demonstrations automatically from action signals. Across 72 simulated manipulation tasks and three
-          real-robot tasks, SkiP reduces executed steps by 15-40% while matching or improving success rates
+          real-robot tasks, <span class="text-emphasis">SkiP reduces executed steps by 15-40% while matching or improving success rates</span>
           across policy backbones.
         </p>
       </div>
@@ -167,15 +168,15 @@
           </div>
           <div class="metric">
             <span class="metric-value">0.85</span>
-            <span class="metric-label">RLBench-10 SR, up from 0.43 with DP</span>
+            <span class="metric-label">RLBench-10 SR, up from 0.70 with CoA-rev</span>
           </div>
           <div class="metric">
             <span class="metric-value">72.9</span>
-            <span class="metric-label">RLBench-10 steps, down from 160.0 with DP</span>
+            <span class="metric-label">RLBench-10 steps, down from 127.5 with CoA-rev</span>
           </div>
           <div class="metric">
-            <span class="metric-value">+14%</span>
-            <span class="metric-label">success gain in the highlighted cup task</span>
+            <span class="metric-value">+14.9 pp</span>
+            <span class="metric-label">average SR gain over CoA-rev on RLBench-10</span>
           </div>
         </div>
       </div>
@@ -186,15 +187,15 @@
         <div class="section-kicker">Core idea</div>
         <h2>Uniform timestep prediction is the bottleneck</h2>
         <p class="lead">
-          Robot demonstrations are not equally informative at every timestep. A long free-space reach is mostly
+          <span class="text-emphasis">Robot demonstrations are not equally informative at every timestep.</span> A long free-space reach is mostly
           predictable, but the grasp, contact, and alignment phase needs dense correction. Standard behavior
           cloning treats both phases the same, so it spends decisions where little changes and compounds
           prediction errors along the way.
         </p>
         <p>
-          SkiP fixes this at the supervision level. In a skip segment, the target action is relabeled to the
+          <span class="text-emphasis">SkiP fixes this at the supervision level.</span> In a skip segment, the target action is relabeled to the
           entrance of the next key segment; inside a key segment, the target remains the immediate next action.
-          The result is a single policy with two behaviors: large, purposeful jumps when motion is redundant,
+          The result is <span class="text-emphasis">a single policy with two behaviors</span>: large, purposeful jumps when motion is redundant,
           and small refinements when precision matters.
         </p>
         <div class="takeaway-grid">
@@ -222,8 +223,8 @@
             <h2>Detect key moments, then relabel the target actions</h2>
           </div>
           <p>
-            Motion Spectrum Keying (MSK) finds high-information segments directly from the action signal.
-            SkiP then changes only the supervision target: smooth free-space portions point to the next key
+            Motion Spectrum Keying (MSK) <span class="text-emphasis">finds high-information segments directly from the action signal</span>.
+            SkiP then <span class="text-emphasis">changes only the supervision target</span>: smooth free-space portions point to the next key
             moment, while contact-rich portions keep dense next-step control.
           </p>
         </div>
@@ -295,9 +296,10 @@
             <h2>The improvement is a speed-accuracy trade-off, not just speed</h2>
           </div>
           <p>
-            SkiP often improves success because skipping removes intermediate predictions that would otherwise
-            accumulate error. The strongest signal is that it cuts steps while moving toward the high-success,
+            SkiP often improves success because <span class="text-emphasis">skipping removes intermediate predictions that would otherwise
+            accumulate error</span>. The strongest signal is that it <span class="text-emphasis">cuts steps while moving toward the high-success,
             low-step region of the comparison plots.
+            </span>
           </p>
         </div>
 
@@ -320,14 +322,13 @@
         </div>
         <div class="comparison-callout">
           <strong>What to read from the figures:</strong>
-          <span>SkiP is not only a faster rollout trick. The relabeling changes the learned action distribution, producing large jumps in skip mode and small corrections in refine mode.</span>
+          <span><span class="text-emphasis">SkiP is not only a faster rollout trick.</span> The relabeling <span class="text-emphasis">changes the learned action distribution</span>, producing large jumps in skip mode and small corrections in refine mode.</span>
         </div>
 
         <div class="result-table-grid">
           <div class="table-card compact-table">
             <div class="table-card-header">
               <span>RLBench-10 aggregate results</span>
-              <small>SR higher is better. Steps and Steps<sub>succ</sub> lower are better.</small>
             </div>
             <div class="table-wrap">
               <table class="academic-table">
@@ -355,7 +356,6 @@
           <div class="table-card compact-table">
             <div class="table-card-header">
               <span>RoboMimic transfer results</span>
-              <small>Diffusion Policy UNet backbone. SR higher is better.</small>
             </div>
             <div class="table-wrap">
               <table class="academic-table">
@@ -373,7 +373,7 @@
                   <tr><th>can</th><td class="best-cell">0.880 &plusmn; 0.016</td><td>0.873 &plusmn; 0.034</td><td>0.233 &plusmn; 0.009</td><td>0.827 &plusmn; 0.019</td></tr>
                   <tr><th>square</th><td>0.420 &plusmn; 0.016</td><td>0.327 &plusmn; 0.025</td><td>0.247 &plusmn; 0.019</td><td class="best-cell">0.673 &plusmn; 0.062</td></tr>
                   <tr><th>transport</th><td class="best-cell">0.633 &plusmn; 0.057</td><td>0.427 &plusmn; 0.047</td><td>0.000 &plusmn; 0.000</td><td>0.587 &plusmn; 0.041</td></tr>
-                  <tr class="best-row"><th>Average SR</th><td>0.723 &plusmn; 0.013</td><td>0.657 &plusmn; 0.013</td><td>0.123 &plusmn; 0.002</td><td>0.772 &plusmn; 0.012</td></tr>
+                  <tr class="summary-row"><th>Average SR</th><td>0.723 &plusmn; 0.013</td><td>0.657 &plusmn; 0.013</td><td>0.123 &plusmn; 0.002</td><td class="best-cell">0.772 &plusmn; 0.012</td></tr>
                 </tbody>
               </table>
             </div>
@@ -408,7 +408,7 @@
           </div>
           <p>
             With a fine-tuned vision-language-action backbone, SkiP improves real tabletop rollouts by using
-            the same mechanism: jump through easy motion, then slow down around the manipulation phase.
+            the same mechanism: <span class="text-emphasis">jump through easy motion, then slow down around the manipulation phase</span>.
           </p>
         </div>
         <div class="real-evidence-grid">
@@ -419,14 +419,13 @@
               <div><strong>2:00</strong><span>tidy-up-desk wall-clock time, down from 2:20</span></div>
             </div>
             <p class="note">
-              The key observation is practical: free-space motion does not need the same prediction density as
-              contact-rich phases. SkiP allocates decisions where the task needs them.
+              The key observation is practical: <span class="text-emphasis">free-space motion does not need the same prediction density as
+              contact-rich phases</span>. SkiP allocates decisions where the task needs them.
             </p>
           </div>
           <div class="table-card compact-table">
             <div class="table-card-header">
               <span>Real-robot fine-tuning</span>
-              <small>15 rollouts per task. Time is wall-clock min:sec.</small>
             </div>
             <div class="table-wrap">
               <table class="academic-table">
@@ -437,8 +436,8 @@
                     <th>SkiP SR</th>
                     <th>Base steps</th>
                     <th>SkiP steps</th>
-                    <th>Base time</th>
-                    <th>SkiP time</th>
+                    <th>Base time<br><small>(min:sec)</small></th>
+                    <th>SkiP time<br><small>(min:sec)</small></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -489,8 +488,8 @@
             <h2>The learned policy separates skip and refine actions</h2>
           </div>
           <p>
-            The ablations show that the segmentation signal matters. MSK beats random stride, velocity-only,
-            and low-velocity alternatives, and the displacement analysis reveals the intended bimodal behavior.
+            The ablations show that the segmentation signal matters. <span class="text-emphasis">MSK beats random stride, velocity-only,
+            and low-velocity alternatives</span>, and the displacement analysis reveals the intended bimodal behavior.
           </p>
         </div>
         <div class="analysis-layout">
@@ -505,8 +504,8 @@
                 \]
               </div>
               <p>
-                During evaluation, SkiP calls are separated by displacement. Skip-mode calls produce large jumps,
-                while key-mode calls stay near zero for local refinement.
+                During evaluation, SkiP calls are separated by displacement. <span class="text-emphasis">Skip-mode calls produce large jumps,
+                while key-mode calls stay near zero</span> for local refinement.
               </p>
             </div>
             <div class="analysis-notes">
@@ -523,7 +522,6 @@
           <div class="table-card compact-table">
             <div class="table-card-header">
               <span>Label source ablation on RLBench-10</span>
-              <small>Success rate, higher is better</small>
             </div>
             <div class="label-source-key">
               <span><strong>RS</strong> marks fixed periodic key segments, matching MSK's approximate key-step ratio.</span>
@@ -553,7 +551,7 @@
                   <tr><th>sweep-dustpan</th><td>.64 &plusmn; .00</td><td>.04 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td></tr>
                   <tr><th>take-lid-off</th><td>.60 &plusmn; .00</td><td class="best-cell">.99 &plusmn; .02</td><td>.71 &plusmn; .02</td><td>.97 &plusmn; .02</td></tr>
                   <tr><th>turn-tap</th><td>.31 &plusmn; .04</td><td>.64 &plusmn; .03</td><td class="best-cell">.73 &plusmn; .02</td><td>.67 &plusmn; .02</td></tr>
-                  <tr class="best-row"><th>Average</th><td>.520</td><td>.545</td><td>.773</td><td>.851</td></tr>
+                  <tr class="summary-row"><th>Average</th><td>.520</td><td>.545</td><td>.773</td><td class="best-cell">.851</td></tr>
                 </tbody>
               </table>
             </div>
