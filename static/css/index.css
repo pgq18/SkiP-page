@@ -925,6 +925,24 @@ h2 {
   font-size: 0.94rem;
 }
 
+.label-source-key {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 0.75rem;
+  padding: 0.85rem 1rem;
+  color: #53615c;
+  background: #fbf8f1;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.label-source-key strong {
+  color: var(--green-dark);
+  font-weight: 900;
+}
+
 .figure-stack {
   display: grid;
   gap: clamp(1.2rem, 2.3vw, 1.7rem);
@@ -1282,6 +1300,12 @@ pre {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .label-source-key {
+    grid-template-columns: 1fr;
+    padding: 0.78rem 0.85rem;
+    font-size: 0.82rem;
   }
 
   .academic-table {

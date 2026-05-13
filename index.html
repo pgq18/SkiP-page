@@ -30,7 +30,7 @@
   <meta name="theme-color" content="#2f5f55">
 
   <title>SkiP: Efficient Robot Manipulation</title>
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
   <link rel="stylesheet" href="static/css/bulma.min.css">
   <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
   <link rel="stylesheet" href="static/css/index.css?v=skip-redesign-23">
@@ -524,6 +524,12 @@
             <div class="table-card-header">
               <span>Label source ablation on RLBench-10</span>
               <small>Success rate, higher is better</small>
+            </div>
+            <div class="label-source-key">
+              <span><strong>RS</strong> marks fixed periodic key segments, matching MSK's approximate key-step ratio.</span>
+              <span><strong>VO</strong> treats high-velocity timesteps as key, which can miss slow contact-rich manipulation.</span>
+              <span><strong>LV</strong> treats low-velocity timesteps as key, a stronger heuristic for careful manipulation.</span>
+              <span><strong>MSK</strong> uses motion-spectrum energy with bend and keyframe cues to place key segments.</span>
             </div>
             <div class="table-wrap">
               <table class="academic-table">
