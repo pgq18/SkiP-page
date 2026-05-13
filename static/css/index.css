@@ -1038,18 +1038,21 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.55rem;
   min-height: 2.7rem;
-  padding: 0.6rem 0.92rem;
+  min-width: 6.1rem;
+  padding: 0.62rem 1.08rem;
   color: var(--green-dark);
   background: var(--gold);
   border: 0;
   border-radius: var(--radius);
+  font-size: 1rem;
   font-weight: 850;
   cursor: pointer;
 }
 
 .copy-bibtex-btn i {
-  margin-right: 0.45rem;
+  flex: 0 0 auto;
 }
 
 .copy-bibtex-btn.copied {
