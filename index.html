@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="SkiP: When to Skip and When to Refine for Efficient Robot Manipulation">
+  <meta name="description" content="SkiP teaches imitation policies when to leap over redundant motion and when to refine contact-rich robot manipulation steps.">
+  <meta name="keywords" content="SkiP, robot manipulation, imitation learning, behavior cloning, motion spectrum keying, temporal abstraction, robotics">
+  <meta name="author" content="Mingtong Dai, Guanqi Peng, Yongjie Bai, Chunjie Chen, Lingbo Liu, Liang Lin, Xinyu Wu">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SkiP: When to Skip and When to Refine for Efficient Robot Manipulation">
+  <meta property="og:description" content="A skip-and-refine imitation learning method that reduces executed robot steps by 15-40% while matching or improving success rates.">
+  <meta property="og:image" content="static/images/social_preview.png">
+  <meta property="og:image:alt" content="SkiP method overview">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SkiP: When to Skip and When to Refine for Efficient Robot Manipulation">
+  <meta name="twitter:description" content="Skip redundant free-space motion, refine contact-rich manipulation, and keep the same policy backbone.">
+  <meta name="twitter:image" content="static/images/social_preview.png">
+  <meta name="citation_title" content="SkiP: When to Skip and When to Refine for Efficient Robot Manipulation">
+  <meta name="citation_author" content="Dai, Mingtong">
+  <meta name="citation_author" content="Peng, Guanqi">
+  <meta name="citation_author" content="Bai, Yongjie">
+  <meta name="citation_author" content="Yan, Feng">
+  <meta name="citation_author" content="Chen, Chunjie">
+  <meta name="citation_author" content="Liu, Lingbo">
+  <meta name="citation_author" content="Lin, Liang">
+  <meta name="citation_author" content="Wu, Xinyu">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="theme-color" content="#2f5f55">
+
+  <title>SkiP: Efficient Robot Manipulation</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="static/css/index.css?v=skip-redesign-23">
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "SkiP: When to Skip and When to Refine for Efficient Robot Manipulation",
+    "description": "SkiP uses action relabeling and Motion Spectrum Keying to allocate dense predictions only where robot manipulation trajectories need them.",
+    "author": [
+      {"@type": "Person", "name": "Mingtong Dai"},
+      {"@type": "Person", "name": "Guanqi Peng"},
+      {"@type": "Person", "name": "Yongjie Bai"},
+      {"@type": "Person", "name": "Chunjie Chen"},
+      {"@type": "Person", "name": "Lingbo Liu"},
+      {"@type": "Person", "name": "Liang Lin"},
+      {"@type": "Person", "name": "Xinyu Wu"}
+    ],
+    "datePublished": "2026",
+    "isAccessibleForFree": true,
+    "image": "static/images/social_preview.png",
+    "keywords": ["robot manipulation", "imitation learning", "behavior cloning", "temporal abstraction", "Motion Spectrum Keying"]
+  }
+  </script>
+</head>
+<body>
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <header class="site-nav" aria-label="Main navigation">
+    <a class="nav-brand" href="#top">SkiP</a>
+    <nav>
+      <a href="#abstract">Abstract</a>
+      <a href="#core-idea">Core Idea</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#real-robot">Real Robot</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#BibTeX">BibTeX</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero-wrap">
+      <div class="container is-widescreen">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Imitation learning for robot manipulation</p>
+            <h1>SkiP: When to Skip and When to Refine for Efficient Robot Manipulation</h1>
+            <p class="hero-summary">
+              Without changing the model architecture, SkiP reshapes the training targets so one policy learns
+              to skip predictable motion and reserve precise control for contact-rich segments.
+            </p>
+          </div>
+          <div class="author-list">
+            <span>Mingtong Dai<sup>1,2</sup></span>
+            <span>Guanqi Peng<sup>3</sup></span>
+            <span>Yongjie Bai<sup>2,4</sup></span>
+            <span>Feng Yan<sup>5</sup></span>
+            <span>Chunjie Chen<sup>1</sup></span>
+            <span>Lingbo Liu*<sup>2</sup></span>
+            <span>Liang Lin<sup>2,4</sup></span>
+            <span>Xinyu Wu<sup>1</sup></span>
+          </div>
+          <div class="affiliation-list" aria-label="Author affiliations">
+            <span><sup>1</sup>Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences</span>
+            <span><sup>2</sup>Peng Cheng Laboratory</span>
+            <span><sup>3</sup>Southern University of Science and Technology</span>
+            <span><sup>4</sup>Sun Yat-sen University</span>
+            <span><sup>5</sup>United Nova Technology Co.,Ltd.</span>
+          </div>
+          <div class="button-row">
+            <a class="paper-button primary" href="#">
+              <i class="fas fa-file-pdf"></i>
+              Paper
+            </a>
+            <a class="paper-button" href="#BibTeX">
+              <i class="fas fa-quote-right"></i>
+              Cite
+            </a>
+            <a class="paper-button disabled" aria-disabled="true">
+              <i class="fab fa-github"></i>
+              Code coming soon
+            </a>
+          </div>
+          <figure class="hero-visual">
+            <img src="static/images/skip-teaser-original.png?v=hires-1" alt="SkiP teaser showing skip and refine behavior across a robot manipulation trajectory">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="abstract-band" id="abstract">
+      <div class="container is-max-desktop">
+        <div class="section-kicker">Abstract</div>
+        <p>
+          Previous imitation learning policies predict future actions at every control step, whether in smooth
+          motion phases or precise, contact-rich operation phases. This uniform treatment is wasteful: most
+          steps in a manipulation trajectory traverse free space and carry little task-relevant information,
+          while a small fraction of key steps around contacts, grasps, and alignment demand dense,
+          high-resolution prediction.
+        </p>
+        <p>
+          SkiP introduces an action relabeling mechanism: at each timestep in a skip segment, the behavior
+          cloning target is replaced with the action at the entrance of the next key segment, enabling the policy
+          to leap over redundant steps in a single decision. Motion Spectrum Keying (MSK) partitions
+          demonstrations automatically from action signals. Across 72 simulated manipulation tasks and three
+          real-robot tasks, SkiP reduces executed steps by 15-40% while matching or improving success rates
+          across policy backbones.
+        </p>
+      </div>
+    </section>
+
+    <section class="metric-band" aria-label="Key results">
+      <div class="container is-widescreen">
+        <div class="metric-grid">
+          <div class="metric">
+            <span class="metric-value">15-40%</span>
+            <span class="metric-label">fewer executed steps while preserving success</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">0.85</span>
+            <span class="metric-label">RLBench-10 SR, up from 0.43 with DP</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">72.9</span>
+            <span class="metric-label">RLBench-10 steps, down from 160.0 with DP</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">+14%</span>
+            <span class="metric-label">success gain in the highlighted cup task</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="core-idea">
+      <div class="container is-max-desktop">
+        <div class="section-kicker">Core idea</div>
+        <h2>Uniform timestep prediction is the bottleneck</h2>
+        <p class="lead">
+          Robot demonstrations are not equally informative at every timestep. A long free-space reach is mostly
+          predictable, but the grasp, contact, and alignment phase needs dense correction. Standard behavior
+          cloning treats both phases the same, so it spends decisions where little changes and compounds
+          prediction errors along the way.
+        </p>
+        <p>
+          SkiP fixes this at the supervision level. In a skip segment, the target action is relabeled to the
+          entrance of the next key segment; inside a key segment, the target remains the immediate next action.
+          The result is a single policy with two behaviors: large, purposeful jumps when motion is redundant,
+          and small refinements when precision matters.
+        </p>
+        <div class="takeaway-grid">
+          <article>
+            <strong>What changes?</strong>
+            <span>The behavior cloning target, not the model architecture.</span>
+          </article>
+          <article>
+            <strong>What does it learn?</strong>
+            <span>A skip mode for low-information motion and a refine mode near contacts.</span>
+          </article>
+          <article>
+            <strong>Why it helps?</strong>
+            <span>Fewer policy calls means less error accumulation and faster execution.</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block paper-tint" id="method">
+      <div class="container is-widescreen">
+        <div class="section-heading method-heading">
+          <div>
+            <div class="section-kicker">Method</div>
+            <h2>Detect key moments, then relabel the target actions</h2>
+          </div>
+          <p>
+            Motion Spectrum Keying (MSK) finds high-information segments directly from the action signal.
+            SkiP then changes only the supervision target: smooth free-space portions point to the next key
+            moment, while contact-rich portions keep dense next-step control.
+          </p>
+        </div>
+        <figure class="paper-figure method-showcase">
+          <img src="static/images/skip-method-overview.png?v=hires-1" alt="Overview of Motion Spectrum Keying and SkiP action relabeling">
+          <figcaption>Overview of SkiP: spectral analysis identifies key segments, then action targets are relabeled to produce skip and refine behavior.</figcaption>
+        </figure>
+        <div class="method-explainer">
+          <div class="method-flow">
+            <article>
+              <span>01</span>
+              <div>
+                <strong>Analyze motion spectrum</strong>
+                <p>DCT energy highlights locally complex movement, while bend cues capture geometric changes that velocity alone can miss.</p>
+              </div>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <strong>Keep key segments dense</strong>
+                <p>Contacts, grasps, and alignment windows stay as refinement regions; predictable transit is treated as skippable.</p>
+              </div>
+            </article>
+            <article>
+              <span>03</span>
+              <div>
+                <strong>Rewrite imitation targets</strong>
+                <p>The same policy backbone learns two output modes: long jumps through free space and short corrections near precise manipulation.</p>
+              </div>
+            </article>
+          </div>
+          <div class="formula-panel method-formulas" aria-label="SkiP equations">
+            <article class="formula-card">
+              <span>Trajectory</span>
+              <div class="equation">\[
+                \tau = \{(o_t, a_t)\}_{t=1}^{T}, \qquad a_t \in \mathbb{R}^{d}
+              \]</div>
+              <p>Demonstrations are action sequences with non-uniform information density.</p>
+            </article>
+            <article class="formula-card">
+              <span>Motion Spectrum Keying</span>
+              <div class="equation">\[
+                c_{t,k} = \sum_{n=0}^{W-1} \alpha_k v_{t,n}
+                \cos\!\left(\frac{\pi(2n+1)k}{2W}\right)
+              \]</div>
+              <p>Short-window DCT coefficients expose local motion complexity.</p>
+            </article>
+            <article class="formula-card">
+              <span>Action relabeling</span>
+              <div class="equation">\[
+                \tilde a_t =
+                \begin{cases}
+                  a_{\operatorname{nextKey}(t)}, & t \in \mathcal{S}_{skip} \\
+                  a_{t+1}, & t \in \mathcal{S}_{key}
+                \end{cases}
+              \]</div>
+              <p>Skip segments learn long jumps; key segments keep dense next-step control.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="results">
+      <div class="container is-widescreen">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">Results</div>
+            <h2>The improvement is a speed-accuracy trade-off, not just speed</h2>
+          </div>
+          <p>
+            SkiP often improves success because skipping removes intermediate predictions that would otherwise
+            accumulate error. The strongest signal is that it cuts steps while moving toward the high-success,
+            low-step region of the comparison plots.
+          </p>
+        </div>
+
+        <div class="result-grid">
+          <article class="result-card highlight">
+            <span class="result-label">Main simulated benchmark</span>
+            <strong>0.85 SR</strong>
+            <p>RLBench-10 average success rate, compared with 0.43 for DP and 0.70 for CoA-rev.</p>
+          </article>
+          <article class="result-card">
+            <span class="result-label">Execution efficiency</span>
+            <strong>72.9 steps</strong>
+            <p>RLBench-10 executed steps, down from 160.0 for DP and 127.5 for CoA-rev.</p>
+          </article>
+          <article class="result-card">
+            <span class="result-label">Cross-backbone transfer</span>
+            <strong>0.772</strong>
+            <p>RoboMimic average SR using a Diffusion Policy UNet backbone, above CoA-rev's 0.723.</p>
+          </article>
+        </div>
+        <div class="comparison-callout">
+          <strong>What to read from the figures:</strong>
+          <span>SkiP is not only a faster rollout trick. The relabeling changes the learned action distribution, producing large jumps in skip mode and small corrections in refine mode.</span>
+        </div>
+
+        <div class="result-table-grid">
+          <div class="table-card compact-table">
+            <div class="table-card-header">
+              <span>RLBench-10 aggregate results</span>
+              <small>SR higher is better. Steps and Steps<sub>succ</sub> lower are better.</small>
+            </div>
+            <div class="table-wrap">
+              <table class="academic-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>SR &uarr;</th>
+                    <th>Steps &darr;</th>
+                    <th>Steps<sub>succ</sub> &darr;</th>
+                    <th>Rank &darr;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><th>DP</th><td>0.43 &plusmn; .02</td><td>160.0 &plusmn; 3</td><td>119.1 &plusmn; 2</td><td>5.4</td></tr>
+                  <tr><th>KF-only</th><td>0.49 &plusmn; .01</td><td>113.1 &plusmn; 3</td><td>10.9 &plusmn; 3</td><td>4.3</td></tr>
+                  <tr><th>CoA-fwd</th><td>0.68 &plusmn; .01</td><td>161.5 &plusmn; 1</td><td>133.3 &plusmn; 1</td><td>3.5</td></tr>
+                  <tr><th>ACT</th><td>0.71 &plusmn; .01</td><td>139.4 &plusmn; 1</td><td>106.1 &plusmn; 1</td><td>3.1</td></tr>
+                  <tr><th>CoA-rev</th><td>0.70 &plusmn; .05</td><td>127.5 &plusmn; 3</td><td>86.2 &plusmn; 3</td><td>3.1</td></tr>
+                  <tr><th>SkiP&dagger;</th><td>0.30 &plusmn; .01</td><td>183.1 &plusmn; 2</td><td>97.6 &plusmn; 7</td><td>6.3</td></tr>
+                  <tr class="best-row"><th>SkiP</th><td>0.85 &plusmn; .01</td><td>72.9 &plusmn; 2</td><td>43.4 &plusmn; 1</td><td>1.6</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="table-card compact-table">
+            <div class="table-card-header">
+              <span>RoboMimic transfer results</span>
+              <small>Diffusion Policy UNet backbone. SR higher is better.</small>
+            </div>
+            <div class="table-wrap">
+              <table class="academic-table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>CoA-rev</th>
+                    <th>CoA-fwd</th>
+                    <th>SkiP&dagger;</th>
+                    <th>SkiP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><th>lift</th><td>0.960 &plusmn; 0.016</td><td class="best-cell">1.000 &plusmn; 0.000</td><td>0.013 &plusmn; 0.019</td><td class="best-cell">1.000 &plusmn; 0.000</td></tr>
+                  <tr><th>can</th><td class="best-cell">0.880 &plusmn; 0.016</td><td>0.873 &plusmn; 0.034</td><td>0.233 &plusmn; 0.009</td><td>0.827 &plusmn; 0.019</td></tr>
+                  <tr><th>square</th><td>0.420 &plusmn; 0.016</td><td>0.327 &plusmn; 0.025</td><td>0.247 &plusmn; 0.019</td><td class="best-cell">0.673 &plusmn; 0.062</td></tr>
+                  <tr><th>transport</th><td class="best-cell">0.633 &plusmn; 0.057</td><td>0.427 &plusmn; 0.047</td><td>0.000 &plusmn; 0.000</td><td>0.587 &plusmn; 0.041</td></tr>
+                  <tr class="best-row"><th>Average SR</th><td>0.723 &plusmn; 0.013</td><td>0.657 &plusmn; 0.013</td><td>0.123 &plusmn; 0.002</td><td>0.772 &plusmn; 0.012</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="figure-stack figure-pair">
+          <figure class="paper-figure wide">
+            <img src="static/images/skip-action-relabeling-original.png?v=hires-1" alt="Action relabeling diagram for SkiP skip and key segments">
+            <figcaption>Action relabeling turns dense next-step supervision into skip-segment targets.</figcaption>
+          </figure>
+          <figure class="paper-figure wide">
+            <img src="static/images/skip-scatter-original.png?v=hires-1" alt="Success-rate versus step-count trade-off across RLBench tasks">
+            <figcaption>SkiP moves toward the high-success, low-step region of the trade-off plot.</figcaption>
+          </figure>
+        </div>
+        <div class="rlbench50-showcase">
+          <figure class="paper-figure wide">
+            <img src="static/images/skip-rlbench50-curve.png?v=hires-1" alt="Per-task success curves on RLBench-50">
+            <figcaption>Per-task success rates on RLBench-50 show smoother degradation for SkiP across long-horizon tasks.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block paper-tint" id="real-robot">
+      <div class="container is-widescreen">
+        <div class="section-heading real-heading">
+          <div>
+            <div class="section-kicker">Real Robot</div>
+            <h2>On hardware, SkiP spends fewer decisions on transit and more near manipulation</h2>
+          </div>
+          <p>
+            With a fine-tuned vision-language-action backbone, SkiP improves real tabletop rollouts by using
+            the same mechanism: jump through easy motion, then slow down around the manipulation phase.
+          </p>
+        </div>
+        <div class="real-evidence-grid">
+          <div class="real-stat-panel">
+            <div class="small-stats">
+              <div><strong>46.7%</strong><span>pour-water SR, up from 40.0%</span></div>
+              <div><strong>53.3%</strong><span>stack-bowls SR, up from 33.3%</span></div>
+              <div><strong>2:00</strong><span>tidy-up-desk wall-clock time, down from 2:20</span></div>
+            </div>
+            <p class="note">
+              The key observation is practical: free-space motion does not need the same prediction density as
+              contact-rich phases. SkiP allocates decisions where the task needs them.
+            </p>
+          </div>
+          <div class="table-card compact-table">
+            <div class="table-card-header">
+              <span>Real-robot fine-tuning</span>
+              <small>15 rollouts per task. Time is wall-clock min:sec.</small>
+            </div>
+            <div class="table-wrap">
+              <table class="academic-table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Base SR</th>
+                    <th>SkiP SR</th>
+                    <th>Base steps</th>
+                    <th>SkiP steps</th>
+                    <th>Base time</th>
+                    <th>SkiP time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>pour-water</th>
+                    <td>40.0</td>
+                    <td class="best-cell">46.7</td>
+                    <td>290.4</td>
+                    <td class="best-cell">265.4</td>
+                    <td>3:44</td>
+                    <td class="best-cell">3:28</td>
+                  </tr>
+                  <tr>
+                    <th>stack-bowls</th>
+                    <td>33.3</td>
+                    <td class="best-cell">53.3</td>
+                    <td>246.3</td>
+                    <td class="best-cell">204.5</td>
+                    <td>2:41</td>
+                    <td class="best-cell">2:16</td>
+                  </tr>
+                  <tr>
+                    <th>tidy-up-desk</th>
+                    <td>66.7</td>
+                    <td class="best-cell">73.3</td>
+                    <td>250.7</td>
+                    <td class="best-cell">207.4</td>
+                    <td>2:20</td>
+                    <td class="best-cell">2:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <figure class="paper-figure real-figure">
+          <img src="static/images/skip-real-robot-rollouts.png?v=hires-1" alt="Real robot rollout examples for tidy-up-desk, pour-water, and stack-the-bowls">
+          <figcaption>Real-robot rollout examples for tidy-up-desk, pour-water, and stack-the-bowls.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section-block" id="analysis">
+      <div class="container is-widescreen">
+        <div class="section-heading compact">
+          <div>
+            <div class="section-kicker">Analysis</div>
+            <h2>The learned policy separates skip and refine actions</h2>
+          </div>
+          <p>
+            The ablations show that the segmentation signal matters. MSK beats random stride, velocity-only,
+            and low-velocity alternatives, and the displacement analysis reveals the intended bimodal behavior.
+          </p>
+        </div>
+        <div class="analysis-layout">
+          <div class="section-copy">
+            <div class="formula-card">
+              <span>Skip/refine evidence</span>
+              <div class="equation">
+                \[
+                  d_{\mathrm{jump}} = \lVert a_1 - p_{\mathrm{ee}} \rVert_2,
+                  \qquad
+                  \mathcal{A} = \mathcal{A}_{\mathrm{skip}} \cup \mathcal{A}_{\mathrm{key}}
+                \]
+              </div>
+              <p>
+                During evaluation, SkiP calls are separated by displacement. Skip-mode calls produce large jumps,
+                while key-mode calls stay near zero for local refinement.
+              </p>
+            </div>
+            <div class="analysis-notes">
+              <article>
+                <strong>MSK is the useful supervision signal</strong>
+                <span>It captures motion curvature and segment placement, instead of relying only on stride or raw velocity.</span>
+              </article>
+              <article>
+                <strong>The output becomes bimodal</strong>
+                <span>The policy learns when to leap through free space and when to slow down near contact-rich parts.</span>
+              </article>
+            </div>
+          </div>
+          <div class="table-card compact-table">
+            <div class="table-card-header">
+              <span>Label source ablation on RLBench-10</span>
+              <small>Success rate, higher is better</small>
+            </div>
+            <div class="table-wrap">
+              <table class="academic-table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>RS</th>
+                    <th>VO</th>
+                    <th>LV</th>
+                    <th>MSK (SkiP)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><th>open-box</th><td>.76 &plusmn; .00</td><td>.03 &plusmn; .02</td><td>.76 &plusmn; .00</td><td class="best-cell">.91 &plusmn; .02</td></tr>
+                  <tr><th>open-drawer</th><td>.72 &plusmn; .00</td><td>.04 &plusmn; .00</td><td>.96 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td></tr>
+                  <tr><th>pick-up-cup</th><td>.23 &plusmn; .05</td><td>.75 &plusmn; .04</td><td class="best-cell">.81 &plusmn; .08</td><td>.76 &plusmn; .06</td></tr>
+                  <tr><th>press-switch</th><td>.41 &plusmn; .05</td><td class="best-cell">.79 &plusmn; .04</td><td>.57 &plusmn; .05</td><td>.53 &plusmn; .04</td></tr>
+                  <tr><th>push-button</th><td>.12 &plusmn; .00</td><td>.65 &plusmn; .02</td><td class="best-cell">1.0 &plusmn; .00</td><td>.99 &plusmn; .02</td></tr>
+                  <tr><th>reach-target</th><td>.64 &plusmn; .00</td><td class="best-cell">.68 &plusmn; .00</td><td>.31 &plusmn; .02</td><td class="best-cell">.68 &plusmn; .00</td></tr>
+                  <tr><th>stack-wine</th><td>.77 &plusmn; .02</td><td>.85 &plusmn; .02</td><td>.88 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td></tr>
+                  <tr><th>sweep-dustpan</th><td>.64 &plusmn; .00</td><td>.04 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td><td class="best-cell">1.0 &plusmn; .00</td></tr>
+                  <tr><th>take-lid-off</th><td>.60 &plusmn; .00</td><td class="best-cell">.99 &plusmn; .02</td><td>.71 &plusmn; .02</td><td>.97 &plusmn; .02</td></tr>
+                  <tr><th>turn-tap</th><td>.31 &plusmn; .04</td><td>.64 &plusmn; .03</td><td class="best-cell">.73 &plusmn; .02</td><td>.67 &plusmn; .02</td></tr>
+                  <tr class="best-row"><th>Average</th><td>.520</td><td>.545</td><td>.773</td><td>.851</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <figure class="paper-figure wide displacement-figure">
+          <img src="static/images/skip-displacement-analysis.png?v=hires-1" alt="Action displacement distributions across RLBench tasks">
+          <figcaption>Action displacement distributions show SkiP's two modes: large skip jumps and near-zero local refinement.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section-block cite-block" id="BibTeX">
+      <div class="container is-max-desktop">
+        <div class="bibtex-header">
+          <div>
+            <div class="section-kicker">Citation</div>
+            <h2>BibTeX</h2>
+          </div>
+          <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+            <i class="fas fa-copy"></i>
+            <span class="copy-text">Copy</span>
+          </button>
+        </div>
+        <pre id="bibtex-code"><code>@misc{dai2026skip,
+  title  = {SkiP: When to Skip and When to Refine for Efficient Robot Manipulation},
+  author = {Dai, Mingtong and Peng, Guanqi and Bai, Yongjie and Yan, Feng and Chen, Chunjie and Liu, Lingbo and Lin, Liang and Wu, Xinyu},
+  year   = {2026}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
