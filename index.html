@@ -89,6 +89,7 @@
       <a href="#core-idea">Core Idea</a>
       <a href="#method">Method</a>
       <a href="#results">Results</a>
+      <a href="#rlbench-rollout-comparison">Demos</a>
       <a href="#real-robot">Real Robot</a>
       <a href="#analysis">Analysis</a>
       <a href="#BibTeX">Citation</a>
@@ -403,6 +404,71 @@
             <img src="static/images/skip-rlbench50-curve.png?v=hires-1" alt="Per-task success curves on RLBench-50">
             <figcaption>Per-task success rates on RLBench-50 show smoother degradation for SkiP across long-horizon tasks.</figcaption>
           </figure>
+        </div>
+        <div class="rollout-comparison" id="rlbench-rollout-comparison">
+          <div class="section-heading compact">
+            <div>
+              <div class="section-kicker">RLBench Rollouts</div>
+              <h2>SkiP and baseline side by side in simulation</h2>
+            </div>
+            <p>
+              Representative RLBench evaluation videos compare the same task under SkiP and a baseline policy.
+              The selected tasks cover drawer opening, box opening, and object grasping behaviors.
+            </p>
+          </div>
+          <div class="rollout-grid" aria-label="SkiP and baseline rollout video comparisons">
+            <article class="rollout-card">
+              <h3>Open drawer</h3>
+              <div class="video-pair">
+                <figure>
+                  <span>SkiP</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/skip/skip_open_drawer.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <figure>
+                  <span>Baseline</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/coa_fwd/coa_fwd_open_drawer.mp4" type="video/mp4">
+                  </video>
+                </figure>
+              </div>
+            </article>
+            <article class="rollout-card">
+              <h3>Open box</h3>
+              <div class="video-pair">
+                <figure>
+                  <span>SkiP</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/skip/skip_open_box.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <figure>
+                  <span>Baseline</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/coa_fwd/coa_fwd_open_box.mp4" type="video/mp4">
+                  </video>
+                </figure>
+              </div>
+            </article>
+            <article class="rollout-card">
+              <h3>Pick up cup</h3>
+              <div class="video-pair">
+                <figure>
+                  <span>SkiP</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/skip/skip_pick_up_cup.mp4" type="video/mp4">
+                  </video>
+                </figure>
+                <figure>
+                  <span>Baseline</span>
+                  <video controls muted playsinline preload="metadata">
+                    <source src="eval_videos/coa_fwd/coa_fwd_pick_up_cup.mp4" type="video/mp4">
+                  </video>
+                </figure>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </section>

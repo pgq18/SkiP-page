@@ -993,6 +993,65 @@ h2 {
   margin-top: clamp(1.7rem, 3vw, 2.3rem);
 }
 
+.rollout-comparison {
+  margin-top: clamp(2.6rem, 5vw, 4rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.rollout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.rollout-card {
+  min-width: 0;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.rollout-card h3 {
+  margin: 0 0 0.85rem;
+  color: var(--green-dark);
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.video-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+.video-pair figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.video-pair span {
+  display: block;
+  margin-bottom: 0.38rem;
+  color: var(--coral);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.video-pair video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  background: #111a18;
+  border: 1px solid rgba(222, 216, 204, 0.9);
+  border-radius: var(--radius);
+}
+
 .paper-figure.wide img {
   max-height: 900px;
   object-fit: contain;
@@ -1142,6 +1201,7 @@ pre {
   .real-layout,
   .real-evidence-grid,
   .analysis-layout,
+  .rollout-grid,
   .result-table-grid,
   .simulation-details,
   .figure-pair,
@@ -1279,6 +1339,7 @@ pre {
 
   .metric-grid,
   .result-grid,
+  .video-pair,
   .takeaway-grid,
   .small-stats {
     grid-template-columns: 1fr;
